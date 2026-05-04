@@ -8,29 +8,29 @@ def home():
     return render_template("index.html")
 
 
+# Route for the Structural page
+@app.route("/structural")
+def structural():
+    return render_template("structural.html")
 
 
 
 
-# # Route for the Structural page
-# @app.route("/structural")
-# def about():
-#     return render_template("structural.html")
 
 # # Route for the Thermal Dynamics page
-# @app.route("/Thermal")
-# def contact():
+# @app.route("/thermal")
+# def thermal():
 #     return render_template("thermal.html")
 
 # # Route for the Fluid Dynamics page
-# @app.route("/Fluid")
-# def contact():
+# @app.route("/fluid")
+# def fluid():
 #     return render_template("fluid.html")
 
 # # Route for the Concrete prediction page
-# @app.route("/Fluid")
-# def contact():
-#     return render_template("fluid.html")
+# @app.route("/concrete")
+# def concrete():
+#     return render_template("concrete.html")
 
 
 
