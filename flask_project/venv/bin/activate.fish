@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV /home/connor/snap/code/195/.local/share/Trash/files/flask_project/venv
+set -gx VIRTUAL_ENV /home/connor/Downloads/VScodeProjects/ConcreteProject/flask_project/venv
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/"bin $PATH
