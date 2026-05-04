@@ -66,9 +66,119 @@
 
 
 
-    <p>Hello there Black Sabbath</p>
-    <br>
-    <p>b</p>
+
+
+    <div class="container my-5">
+
+        <!-- main container for the Concrete Predictor -->
+
+        <!-- Header / Hero Section -->
+        <div class="hero-section mb-5">
+            <h3 class="display-8">Concrete Strength Predicor</h3>
+            <p class="lead text-start"> This is a predictor for concrete strength (MPa). It is based off user input of
+                ingredient amounts (kg/m<sup>3</sup>) that are needed for concrete. Along with the predicted strength of
+                the "hyplothetical batch", 3 graphs will be displayed; 1 relating to the prediction and 2 relevent to
+                the datasets' distribution and regression lines.</p>
+            <p>batch of ingredients in Kg becuase of Kg/m^3</p>
+
+        </div>
+
+        <!-- Container 1: Inputs Panel & Components -->
+        <div class="container mb-5 p-4 border rounded shadow-sm">
+            <div class="row">
+
+
+
+                <!-- Column 1: Panel with CSV selection -->
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 h-100">
+                        <h5 class="card-title">Select Training Data:</h5>
+                        <p>The selected dataset will be used for prediction of strength.</p>
+
+                        <form method="POST" action="/concrete">
+                            {% for csv_file in csv_files %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="selected_csv" id="{{ csv_file }}"
+                                    value="{{ csv_file }}" {% if loop.first %}checked{% endif %}>
+                                <label class="form-check-label" for="{{ csv_file }}">
+                                    {{ csv_file }}
+                                </label>
+                            </div>
+                            {% endfor %}
+
+                            <button type="submit" class="btn btn-primary mt-3 w-100">Run Prediction</button>
+                        </form>
+                    </div>
+                </div>
+
+
+
+                <!-- Column 2: Vertical Stack of Components -->
+                <div class="col-md-8 mb-3">
+                    <div class="d-flex flex-column gap-3">
+
+                        <div class="card p-3">
+                            <h6 class="card-title">Component 1</h6>
+                            <!-- Input field example -->
+                            <form method="POST" action="/compute" enctype="multipart/form-data">
+                                <div class="mb-2">
+                                    <label for="param1" class="form-label">Parameter 1</label>
+                                    <input type="number" class="form-control" id="param1" name="param1" required>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label for="param2" class="form-label">Parameter 2</label>
+                                    <input type="number" class="form-control" id="param2" name="param2" required>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label for="csvfile" class="form-label">Upload CSV (optional)</label>
+                                    <input class="form-control" type="file" id="csvfile" name="csvfile">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 mt-2">Run
+                                    Computation</button>
+                            </form>
+                        </div>
+
+                        <div class="card p-3">
+                            <h6 class="card-title">Component 2</h6>
+                            <p>Additional parameters or controls can go here.</p>
+                        </div>
+
+                        <div class="card p-3">
+                            <h6 class="card-title">Component 3</h6>
+                            <p>Extra information, notes, or dynamic messages after computation.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Container 2: Main Graph (Graph 3 only) -->
+        <div class="container p-4 border rounded shadow-sm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card p-3">
+                        <h5 class="card-title">Main Graph</h5>
+                        <div id="graph-container" class="text-center">
+                            {% if plot_url %}
+                            <img src="{{ plot_url }}" class="img-fluid" alt="Computation Graph">
+                            {% else %}
+                            <p class="text-muted">Your computation results will appear here.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
 
 
 </body>

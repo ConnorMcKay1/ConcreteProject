@@ -1,4 +1,3 @@
-
 /* home page - body */
 body {
     background-color: skyblue;
@@ -6,19 +5,51 @@ body {
 
 /* home page - hero banner */
 .hero-banner {
-    max-height: 350px;   /* banner height */
+    max-height: 350px;
+    /* banner height */
     overflow: hidden;
 }
 
 .hero-banner img {
     height: 350px;
-    object-fit: cover;   /* prevents stretching */
+    object-fit: cover;
+    /* prevents stretching */
 }
 
 
 /* home page - slideshow */
 .carousel-caption {
-    background: rgba(0, 0, 0, 0.4); /* subtle readability boost */
+    background: rgba(0, 0, 0, 0.4);
+    /* subtle readability boost */
     padding: 10px;
     border-radius: 8px;
+}
+
+
+
+/* concrete page - input/results display container */
+
+.card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.hero-section {
+    padding: 40px 0;
+    text-align: center;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+#graph-container img {
+    max-height: 500px;
+    object-fit: contain;
 }
