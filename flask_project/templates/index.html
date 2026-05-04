@@ -8,11 +8,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engineering Tomorrow</title>
+
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JS + Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 
     <!-- personal css sheet link -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
 
 </head>
 
@@ -51,12 +59,17 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        <a class="nav-link" href="{{ url_for('thermal') }}">Thermal</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                        <a class="nav-link" href="{{ url_for('fluid') }}">Fluid</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('concrete') }}">Concrete</a>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -68,66 +81,64 @@
 
     <!-- this is the slideshow of pictures -->
 
-    <div>
 
-        <!-- Carousel -->
-        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="hero-banner">
+
+        <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2200"
+            data-bs-pause="false">
             <div class="carousel-inner">
 
                 <div class="carousel-item active">
-                    <img src="{{ url_for('static', filename='images/website_inspiration.png') }}" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <img src="{{ url_for('static', filename='images/fire_supression.jpg') }}" class="d-block w-100">
+                    <div class="carousel-caption">
                         <h5>Innovative Engineering</h5>
                         <p>Shaping the future of tomorrow.</p>
                     </div>
                 </div>
-                
+
                 <div class="carousel-item">
-                    <img src="{{ url_for('static', filename='images/structural.webp') }}" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <img src="{{ url_for('static', filename='images/structural_FEA.png') }}" class="d-block w-100">
+                    <div class="carousel-caption">
                         <h5>Green Solutions</h5>
                         <p>Creating sustainable solutions for the world.</p>
                     </div>
                 </div>
-                
+
                 <div class="carousel-item">
-                    <img src="{{ url_for('static', filename='images/structural-analysis.webp) }}" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
+                    <img src="{{ url_for('static', filename='images/nuclear_turbine.jpg') }}" class="d-block w-100">
+                    <div class="carousel-caption">
                         <h5>Innovation at its Best</h5>
                         <p>Turning ideas into reality.</p>
                     </div>
                 </div>
-            </div>
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+            </div>
         </div>
 
     </div>
 
 
 
-    <!-- This is the section for the gallery of companies/organizations logos -->
 
+    <!-- This is the section for the gallery of companies/organizations logos -->
     <div>
 
         <!-- Image Container -->
         <section class="container my-5">
             <div class="row">
                 <div class="col-md-4">
-                    <img src="https://via.placeholder.com/300" class="img-fluid" alt="...">
+                    <img src="{{ url_for('static', filename='images/bbc.png') }}" class="img-fluid" alt="BBC Logo">
                 </div>
                 <div class="col-md-4">
-                    <img src="https://via.placeholder.com/300" class="img-fluid" alt="...">
+                    <img src="{{ url_for('static', filename='images/siemens.png') }}" class="img-fluid"
+                        alt="Siemens Logo">
                 </div>
                 <div class="col-md-4">
-                    <img src="https://via.placeholder.com/300" class="img-fluid" alt="...">
+                    <img src="{{ url_for('static', filename='images/pbs.png') }}" class="img-fluid" alt="PBS Logo">
+                </div>
+                <div class="col-md-4">
+                    <img src="{{ url_for('static', filename='images/honeywell.png') }}" class="img-fluid"
+                        alt="Honeywell Logo">
                 </div>
             </div>
         </section>
@@ -138,7 +149,6 @@
 
 
     <!-- This is obviously the footer for the website -->
-
     <div>
 
         <!-- Footer -->

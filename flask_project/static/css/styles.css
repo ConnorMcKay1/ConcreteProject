@@ -3,3 +3,22 @@
 body {
     background-color: skyblue;
 }
+
+/* home page - hero banner */
+.hero-banner {
+    max-height: 350px;   /* banner height */
+    overflow: hidden;
+}
+
+.hero-banner img {
+    height: 350px;
+    object-fit: cover;   /* prevents stretching */
+}
+
+
+/* home page - slideshow */
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.4); /* subtle readability boost */
+    padding: 10px;
+    border-radius: 8px;
+}
