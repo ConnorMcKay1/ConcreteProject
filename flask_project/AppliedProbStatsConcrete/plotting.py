@@ -8,11 +8,12 @@ then do this for each of the graphs; so just 'For N .csv files in directory, run
 
 
 
-import pandas as pd
-import io
+import matplotlib
+matplotlib.use('Agg')  # ensures no GUI is used
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import stats
+from io import BytesIO
+import base64
 
 from .utilsStats import *
 
@@ -65,7 +66,7 @@ def LinearRegression_AllColumns(df):
 
 
 
-
+''' LEGACY '''
 def DistributionPlot(df):
     print("plot the damn distributions!")
 
@@ -107,8 +108,8 @@ def DistributionPlot(df):
     plt.show()
     
     
-    
-    
+
+
 def PlotDiagnostics(y, y_hat, epsilon):
     y = y.flatten()
     y_hat = y_hat.flatten()
@@ -146,4 +147,12 @@ def PlotDiagnostics(y, y_hat, epsilon):
     fig.colorbar(sc, ax=axs[2], label="|Error|")
     
     plt.tight_layout()
-    plt.show()
+    
+    # saving to in-memory for Flask
+    buf = BytesIO()
+    fig.savefig(buf, format="png")
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    plt.close(fig)
+    
+    return img_base64  # send this to template for <img src="data:image/png;base64,{{ img }}">

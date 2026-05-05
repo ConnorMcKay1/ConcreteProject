@@ -1,14 +1,17 @@
+import base64
+import io
 import os
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 
 from AppliedProbStatsConcrete.main import predict_concrete
-
+from AppliedProbStatsConcrete.utilsProbs import ThetaFinder, MatrixDummyColumn, TargetVector, Predict
+from AppliedProbStatsConcrete.plotting import PlotDiagnostics 
 
 app = Flask(__name__)
 
 
-DATA_FOLDER = "AppliedProbStatsConcrete"
+DATA_FOLDER = "./AppliedProbStatsConcrete"
 
 
 # Route for the homepage
@@ -69,34 +72,64 @@ import numpy as np
 def run_prediction():
     selected_csv = request.form.get("selected_csv")
     ingredients = request.form.get("ingredients")
-    
+
     if not selected_csv or not ingredients:
         return jsonify({"error": "Missing CSV or ingredient inputs"}), 400
 
-    # Parse ingredient JSON
     ingredients = json.loads(ingredients)
-    x_new = np.array([[ingredients["cement"],
-                       ingredients["slag"],
-                       ingredients["fly_ash"],
-                       ingredients["water"],
-                       ingredients["super_plasticizer"],
-                       ingredients["coarse_agg"],
-                       ingredients["fine_agg"],
-                       ingredients["age"]]])
 
-    # Predict using main.py function
-    theta, y_pred, df = predict_concrete(os.path.join(DATA_FOLDER, selected_csv), x_new[0])
+    x_new = np.array([
+        ingredients["cement"],
+        ingredients["slag"],
+        ingredients["fly_ash"],
+        ingredients["water"],
+        ingredients["super_plasticizer"],
+        ingredients["coarse_agg"],
+        ingredients["fine_agg"],
+        ingredients["age"]
+    ])
+
+    result = predict_concrete(os.path.join(DATA_FOLDER, selected_csv), x_new)
+
 
     return jsonify({
-        "theta": theta.tolist(),      # convert np.array to list
-        "predicted_y": float(y_pred)  # convert to float for JSON
+        "theta": result["theta"].flatten().tolist(),
+        "epsilon_sample": result["epsilon"].flatten()[:10].tolist(),
+        "predicted_y": float(np.array(result["y_pred"]).flatten()[0])
     })
 
 
+# route for getting data for the plot diagnostics
+@app.route("/concrete/plot_diagnostics", methods=["POST"])
+def plot_diagnostics_route():
+    selected_csv = request.form.get("selected_csv")
+    if not selected_csv:
+        return jsonify({"error": "No CSV selected"}), 400
 
+    try:
+        df = pd.read_csv(os.path.join(DATA_FOLDER, selected_csv))
 
+        # Compute predicted values and residuals using your existing functions
+        theta, epsilon, y_hat = ThetaFinder(df)
+        y_actual = TargetVector(df)  # last column of df
 
+        # Generate diagnostics plot as base64
+        img_base64 = PlotDiagnostics(y_actual, y_hat, epsilon)
 
-# main entry point
+        return jsonify({
+            "plot_url": f"data:image/png;base64,{img_base64}",
+            "epsilon_sample": epsilon[:10].flatten().tolist()
+            })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+    
+    
+    
+    
+    
+    
+
+# #  main entry point
 if __name__ == "__main__":
     app.run(debug=True)
