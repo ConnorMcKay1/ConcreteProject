@@ -1,13 +1,4 @@
-"Cement
-(kg/m3)","Blast-furnace Slag
-(kg/m3)","Fly Ash
-(kg/m3)","Water
-(kg/m3)","Super-plasticizer
-(kg/m3)","Coarse Aggregate 
-(kg/m3)","Fine Aggregate
-(kg/m3)","Age of testing
-(day)","Concrete compressive strength
-(MPa) "
+Cement,Blast-furnace Slag,Fly Ash,Water,Super-plasticizer,Coarse Aggregate,Fine Aggregate,Age,Concrete Compressive Strength
 336.00,0.00,0.00,182.00,3.00,986.00,817.00,28.00,44.86
 140.10,4.20,215.90,193.90,4.70,1049.50,710.10,28.00,26.42
 350.00,0.00,0.00,203.00,0.00,974.00,775.00,14.00,22.53

@@ -22,6 +22,9 @@
     <!-- personal css sheet link -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 
+
+
+
 </head>
 
 
@@ -87,25 +90,20 @@
         <div class="container mb-5 p-4 border rounded shadow-sm">
             <div class="row">
 
-
-
                 <!-- Column 1: Panel with CSV selection -->
                 <div class="col-md-4 mb-3">
                     <div class="card p-3 h-100">
                         <h5 class="card-title">Select Training Data:</h5>
-                        <p>The selected dataset will be used for prediction of strength.</p>
-
-                        <form method="POST" action="/concrete">
+                        <form id="csv-form" method="POST" action="/concrete">
                             {% for csv_file in csv_files %}
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="selected_csv" id="{{ csv_file }}"
                                     value="{{ csv_file }}" {% if loop.first %}checked{% endif %}>
-                                <label class="form-check-label" for="{{ csv_file }}">
-                                    {{ csv_file }}
-                                </label>
+                                <label class="form-check-label" for="{{ csv_file }}">{{ csv_file }}</label>
                             </div>
                             {% endfor %}
 
+                            <!-- Run Prediction only submits final form -->
                             <button type="submit" class="btn btn-primary mt-3 w-100">Run Prediction</button>
                         </form>
                     </div>
@@ -114,48 +112,111 @@
 
 
                 <!-- Column 2: Vertical Stack of Components -->
+
+                <!-- Right Panel: Vertical Stack -->
                 <div class="col-md-8 mb-3">
                     <div class="d-flex flex-column gap-3">
 
-                        <div class="card p-3">
-                            <h6 class="card-title">Component 1</h6>
-                            <!-- Input field example -->
-                            <form method="POST" action="/compute" enctype="multipart/form-data">
-                                <div class="mb-2">
-                                    <label for="param1" class="form-label">Parameter 1</label>
-                                    <input type="number" class="form-control" id="param1" name="param1" required>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label for="param2" class="form-label">Parameter 2</label>
-                                    <input type="number" class="form-control" id="param2" name="param2" required>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label for="csvfile" class="form-label">Upload CSV (optional)</label>
-                                    <input class="form-control" type="file" id="csvfile" name="csvfile">
-                                </div>
-
-                                <button type="submit" class="btn btn-primary w-100 mt-2">Run
-                                    Computation</button>
-                            </form>
+                        <!-- box-1: CSV preview -->
+                        <div id="csv-preview-container" class="card p-3">
+                            <h6 class="card-title">CSV Preview (First 5 Rows)</h6>
+                            {% if csv_preview %}
+                            <p>Total rows: {{ row_count }}</p>
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        {% for col in csv_preview[0].keys() %}
+                                        <th>{{ col }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in csv_preview %}
+                                    <tr>
+                                        {% for col in row.keys() %}
+                                        <td>{{ row[col] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <p>Select a CSV to preview its data.</p>
+                            {% endif %}
                         </div>
 
+                        <!-- box-2 & box-3 placeholders -->
+                        <!-- box-2: Ingredient Input + Regression Equation -->
                         <div class="card p-3">
-                            <h6 class="card-title">Component 2</h6>
-                            <p>Additional parameters or controls can go here.</p>
+                            <h6 class="card-title">Ingredient Input (kg/m³)</h6>
+
+                            <!-- Ingredients row -->
+                            <div class="d-flex flex-wrap gap-2 mb-3" id="ingredient-row">
+                                <div class="text-center flex-fill">
+                                    <label for="cement" class="form-label">Cement</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input" id="cement"
+                                        name="cement" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="slag" class="form-label">Blast-furnace Slag</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input" id="slag"
+                                        name="slag" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="fly_ash" class="form-label">Fly Ash</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input" id="fly_ash"
+                                        name="fly_ash" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="water" class="form-label">Water</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input" id="water"
+                                        name="water" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="super_plasticizer" class="form-label">Super-plasticizer</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input"
+                                        id="super_plasticizer" name="super_plasticizer" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="coarse_agg" class="form-label">Coarse Aggregate</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input"
+                                        id="coarse_agg" name="coarse_agg" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="fine_agg" class="form-label">Fine Aggregate</label>
+                                    <input type="number" step="0.01" class="form-control ingredient-input" id="fine_agg"
+                                        name="fine_agg" placeholder="kg/m³">
+                                </div>
+                                <div class="text-center flex-fill">
+                                    <label for="age" class="form-label">Age</label>
+                                    <input type="number" step="1" class="form-control ingredient-input" id="age"
+                                        name="age" placeholder="days">
+                                </div>
+                            </div>
+
+                            <!-- Linear regression formula placeholder -->
+                            <div class="mt-3">
+                                <p id="regression-equation" class="mb-1"><strong>y = θ0 + θ1X1 + ... + θnXn</strong></p>
+                                <p id="predicted-y" class="text-success"><strong>Predicted Concrete Strength: --
+                                        MPa</strong></p>
+                            </div>
                         </div>
 
+
+
+
                         <div class="card p-3">
-                            <h6 class="card-title">Component 3</h6>
-                            <p>Extra information, notes, or dynamic messages after computation.</p>
+                            <h6>Component 3</h6>
                         </div>
 
                     </div>
                 </div>
 
+
             </div>
-        </div>
+        </div> <!-- end of left panel -->
+
+
 
         <!-- Container 2: Main Graph (Graph 3 only) -->
         <div class="container p-4 border rounded shadow-sm">
@@ -182,5 +243,109 @@
 
 
 </body>
+
+
+
+
+
+
+
+<!-- AREA FOR SCRIPTING -->
+
+
+<!-- This is component-1: CSV sample -->
+<script>
+    document.querySelectorAll('input[name="selected_csv"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const formData = new FormData();
+            formData.append('selected_csv', radio.value);
+
+            fetch("/concrete/preview", {
+                method: "POST",
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.querySelector('#csv-preview-container').innerHTML = "<p>" + data.error + "</p>";
+                        return;
+                    }
+
+                    const container = document.querySelector('#csv-preview-container');
+                    let html = `<h6 class="card-title">CSV Preview (First 5 Rows)</h6>`;
+                    html += `<p>Total rows: ${data.row_count}</p>`;
+                    html += `<table class="table table-sm table-striped"><thead><tr>`;
+
+                    data.columns.forEach(col => {
+                        html += `<th>${col}</th>`;
+                    });
+
+                    html += `</tr></thead><tbody>`;
+
+                    data.preview.forEach(row => {
+                        html += `<tr>`;
+                        data.columns.forEach(col => {
+                            html += `<td>${row[col]}</td>`;
+                        });
+                        html += `</tr>`;
+                    });
+
+                    html += `</tbody></table>`;
+                    container.innerHTML = html;
+                })
+                .catch(err => console.error(err));
+        });
+    });
+</script>
+
+
+
+
+<!-- This is for component-2: getting the user input for regression equation -->
+<script>
+    document.querySelector('#csv-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // prevent page reload
+
+        // Collect selected CSV
+        const selectedCSV = document.querySelector('input[name="selected_csv"]:checked').value;
+
+        // Collect ingredient inputs
+        const inputs = {};
+        document.querySelectorAll('.ingredient-input').forEach(inp => {
+            inputs[inp.id] = parseFloat(inp.value) || 0;
+        });
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('selected_csv', selectedCSV);
+        formData.append('ingredients', JSON.stringify(inputs));
+
+        fetch('/concrete/run_prediction', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Update regression equation
+                document.querySelector('#regression-equation').innerHTML = `y = ${data.theta.join(' + ')}`;
+                // Update predicted y
+                document.querySelector('#predicted-y').innerHTML = `Predicted Concrete Strength: <strong>${data.predicted_y.toFixed(2)} MPa</strong>`;
+            })
+            .catch(err => console.error(err));
+    });
+</script>
+
+
+
+
+
+
+
+
 
 </html>

@@ -1,6 +1,12 @@
-from flask import Flask, render_template
+import os
+import pandas as pd
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
+
+
+DATA_FOLDER = "AppliedProb&StatsConcrete"
+
 
 # Route for the homepage
 @app.route("/")
@@ -27,13 +33,77 @@ def fluid():
     return render_template("fluid.html")
 
 
-# Route for the Concrete prediction page
-@app.route("/concrete")
+# Route for the Concrete page
+@app.route("/concrete", methods=["GET"])
 def concrete():
-    return render_template("concrete.html")
+    csv_files = [f for f in os.listdir(DATA_FOLDER) if f.endswith(".csv")]
+    return render_template("concrete.html", csv_files=csv_files, csv_preview=None, row_count=None)
+
+# Route for CSV preview
+@app.route("/concrete/preview", methods=["POST"])
+def concrete_preview():
+    selected_csv = request.form.get("selected_csv")
+    if not selected_csv:
+        return jsonify({"error": "No CSV selected"}), 400
+
+    df = pd.read_csv(os.path.join(DATA_FOLDER, selected_csv))
+    preview_data = df.head(5).to_dict(orient="records")
+    row_count = len(df)
+    columns = df.columns.tolist()
+
+    return jsonify({
+        "preview": preview_data,
+        "row_count": row_count,
+        "columns": columns
+    })
+
+
+# route for getting user ingredient amounts
+import json
+import numpy as np
+
+
+@app.route("/concrete/run_prediction", methods=["POST"])
+def run_prediction():
+    selected_csv = request.form.get("selected_csv")
+    ingredients = request.form.get("ingredients")
+    
+    if not selected_csv or not ingredients:
+        return jsonify({"error": "Missing CSV or ingredient inputs"}), 400
+
+    ingredients = json.loads(ingredients)
+    
+    # Load CSV
+    df = pd.read_csv(os.path.join(DATA_FOLDER, selected_csv))
+
+    # Compute theta, residuals, predicted y_hat
+    theta, epsilon, y_hat = ThetaFinder(df)
+
+    # Prepare new input array for prediction
+    x_new = np.array([[ingredients["cement"],
+                       ingredients["slag"],
+                       ingredients["fly_ash"],
+                       ingredients["water"],
+                       ingredients["super_plasticizer"],
+                       ingredients["coarse_agg"],
+                       ingredients["fine_agg"],
+                       ingredients["age"]]])
+    
+    # Predict concrete strength
+    y_pred = Predict(x_new, theta)
+
+    # Return theta and predicted y
+    return jsonify({
+        "theta": theta.tolist(),  # convert np.array to list
+        "predicted_y": float(y_pred)
+    })
 
 
 
 
+
+
+
+# main entry point
 if __name__ == "__main__":
     app.run(debug=True)
