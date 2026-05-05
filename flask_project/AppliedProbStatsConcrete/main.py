@@ -37,9 +37,9 @@ PREDICT CONCRETE STRENGHT based on the ingredient input amounts/auntities?
     #                      to model the relationship & make predictions                      
 ##################################################################
 
-from utilsStats import *
-from plotting import *
-from utilsProbs import *
+from .utilsStats import *
+from .plotting import *
+from .utilsProbs import *
 
 print("test test turnip \n")
 
@@ -106,21 +106,20 @@ def test():
     print("Conversion complete!")
 
 
-# example from first line for data_1.csv
-# 550, 0, 0, 165, 3.3, 584, 607, 7, 49.71
-if __name__ == "__main__":
-    print("main runner")
-    
+# this was added for connection to APP.py
+def predict_concrete(csv_file, x_new):
+    df = pd.read_csv(csv_file)
     theta, epsilon, y_hat = ThetaFinder(df)
-    
-    x_new = np.array([[550, 0, 0, 165, 3.3, 584, 607, 7]])
-    y_pred = Predict(x_new, theta)
+    y_pred = Predict(np.array([x_new]), theta)
+    return theta, y_pred, df
 
-    print("PREDICTION OF y:")
-    print(y_pred)
-    
-    y = TargetVector(df)
-    PlotDiagnostics(y, y_hat, epsilon)
+
+
+
+if __name__ == "__main__":
+    test_vector = [550, 0, 0, 165, 3.3, 584, 607, 7]
+    theta, y_pred, df = predict_concrete(dataFile, test_vector)
+    print("PREDICTION OF y:", y_pred)
     
     
     

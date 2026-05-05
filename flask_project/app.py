@@ -2,10 +2,13 @@ import os
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 
+from AppliedProbStatsConcrete.main import predict_concrete
+
+
 app = Flask(__name__)
 
 
-DATA_FOLDER = "AppliedProb&StatsConcrete"
+DATA_FOLDER = "AppliedProbStatsConcrete"
 
 
 # Route for the homepage
@@ -62,7 +65,6 @@ def concrete_preview():
 import json
 import numpy as np
 
-
 @app.route("/concrete/run_prediction", methods=["POST"])
 def run_prediction():
     selected_csv = request.form.get("selected_csv")
@@ -71,15 +73,8 @@ def run_prediction():
     if not selected_csv or not ingredients:
         return jsonify({"error": "Missing CSV or ingredient inputs"}), 400
 
+    # Parse ingredient JSON
     ingredients = json.loads(ingredients)
-    
-    # Load CSV
-    df = pd.read_csv(os.path.join(DATA_FOLDER, selected_csv))
-
-    # Compute theta, residuals, predicted y_hat
-    theta, epsilon, y_hat = ThetaFinder(df)
-
-    # Prepare new input array for prediction
     x_new = np.array([[ingredients["cement"],
                        ingredients["slag"],
                        ingredients["fly_ash"],
@@ -88,16 +83,14 @@ def run_prediction():
                        ingredients["coarse_agg"],
                        ingredients["fine_agg"],
                        ingredients["age"]]])
-    
-    # Predict concrete strength
-    y_pred = Predict(x_new, theta)
 
-    # Return theta and predicted y
+    # Predict using main.py function
+    theta, y_pred, df = predict_concrete(os.path.join(DATA_FOLDER, selected_csv), x_new[0])
+
     return jsonify({
-        "theta": theta.tolist(),  # convert np.array to list
-        "predicted_y": float(y_pred)
+        "theta": theta.tolist(),      # convert np.array to list
+        "predicted_y": float(y_pred)  # convert to float for JSON
     })
-
 
 
 
